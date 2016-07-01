@@ -26,7 +26,6 @@ import webob
 
 from clictest.common import exception
 from clictest.common import timeutils
-from clictest.domain import proxy as domain_proxy
 from clictest.i18n import _, _LE
 
 
