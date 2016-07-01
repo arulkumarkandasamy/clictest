@@ -1,0 +1,15 @@
+include run_tests.sh ChangeLog
+include README.rst builddeb.sh
+include MANIFEST.in pylintrc
+include AUTHORS
+include run_tests.py
+include HACKING.rst
+include LICENSE
+include ChangeLog
+include babel.cfg tox.ini
+graft doc
+graft etc
+graft clictest/locale
+graft clictest/tests
+graft tools
+global-exclude *.pyc
