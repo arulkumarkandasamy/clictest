@@ -14,7 +14,7 @@
 # limitations under the License.
 
 """
-Helper script for starting/stopping/reloading Glance server programs.
+Helper script for starting/stopping/reloading Clictest server programs.
 Thanks for some of the code, Swifties ;)
 """
 

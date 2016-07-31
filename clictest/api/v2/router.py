@@ -14,9 +14,8 @@
 #    under the License.
 
 
-from clictest.api.v1 import objectspy
+from clictest.api.v2 import objectspy
 from clictest.common import wsgi
-
 
 
 class API(wsgi.Router):
@@ -31,7 +30,7 @@ class API(wsgi.Router):
         mapper.connect("/",
                        controller=objectspy_resource,
                        action="index")
-        mapper.connect("/objectspy/{userid}/{prjid}/{browser}/{url}/{chvr}",
+        mapper.connect("/objectspy",
                        controller=objectspy_resource,
                        action='show',
                        conditions={'method': ['GET']})               

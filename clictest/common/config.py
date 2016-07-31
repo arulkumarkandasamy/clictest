@@ -41,10 +41,137 @@ paste_deploy_opts = [
                help=_('Name of the paste configuration file.')),
 ]
 
+task_opts = [
+    cfg.IntOpt('task_time_to_live',
+               default=48,
+               help=_("Time in hours for which a task lives after, either "
+                      "succeeding or failing"),
+               deprecated_opts=[cfg.DeprecatedOpt('task_time_to_live',
+                                                  group='DEFAULT')]),
+    cfg.StrOpt('task_executor',
+               default='taskflow',
+               help=_("Specifies which task executor to be used to run the "
+                      "task scripts.")),
+    cfg.StrOpt('work_dir',
+               help=_('Work dir for asynchronous task operations. '
+                      'The directory set here will be used to operate over '
+                      'images - normally before they are imported in the '
+                      'destination store. When providing work dir, make sure '
+                      'enough space is provided for concurrent tasks to run '
+                      'efficiently without running out of space. A rough '
+                      'estimation can be done by multiplying the number of '
+                      '`max_workers` - or the N of workers running - by an '
+                      'average image size (e.g 500MB). The image size '
+                      'estimation should be done based on the average size in '
+                      'your deployment. Note that depending on the tasks '
+                      'running you may need to multiply this number by some '
+                      'factor depending on what the task does. For example, '
+                      'you may want to double the available size if image '
+                      'conversion is enabled. All this being said, remember '
+                      'these are just estimations and you should do them '
+                      'based on the worst case scenario and be prepared to '
+                      'act in case they were wrong.')),
+]
+
+
+common_opts = [
+    cfg.BoolOpt('allow_additional_image_properties', default=True,
+                help=_('Whether to allow users to specify image properties '
+                       'beyond what the image schema provides')),
+    cfg.IntOpt('image_member_quota', default=128,
+               help=_('Maximum number of image members per image. '
+                      'Negative values evaluate to unlimited.')),
+    cfg.IntOpt('image_property_quota', default=128,
+               help=_('Maximum number of properties allowed on an image. '
+                      'Negative values evaluate to unlimited.')),
+    cfg.IntOpt('image_tag_quota', default=128,
+               help=_('Maximum number of tags allowed on an image. '
+                      'Negative values evaluate to unlimited.')),
+    cfg.IntOpt('image_location_quota', default=10,
+               help=_('Maximum number of locations allowed on an image. '
+                      'Negative values evaluate to unlimited.')),
+    cfg.StrOpt('data_api', default='glance.db.sqlalchemy.api',
+               help=_('Python module path of data access API')),
+    cfg.IntOpt('limit_param_default', default=25,
+               help=_('Default value for the number of items returned by a '
+                      'request if not specified explicitly in the request')),
+    cfg.IntOpt('api_limit_max', default=1000,
+               help=_('Maximum permissible number of items that could be '
+                      'returned by a request')),
+    cfg.BoolOpt('show_image_direct_url', default=False,
+                help=_('Whether to include the backend image storage location '
+                       'in image properties. Revealing storage location can '
+                       'be a security risk, so use this setting with '
+                       'caution!')),
+    cfg.BoolOpt('show_multiple_locations', default=False,
+                help=_('Whether to include the backend image locations '
+                       'in image properties. '
+                       'For example, if using the file system store a URL of '
+                       '"file:///path/to/image" will be returned to the user '
+                       'in the \'direct_url\' meta-data field. '
+                       'Revealing storage location can '
+                       'be a security risk, so use this setting with '
+                       'caution! '
+                       'Setting this to true overrides the '
+                       'show_image_direct_url option.')),
+    cfg.IntOpt('image_size_cap', default=1099511627776,
+               max=9223372036854775808,
+               help=_("Maximum size of image a user can upload in bytes. "
+                      "Defaults to 1099511627776 bytes (1 TB)."
+                      "WARNING: this value should only be increased after "
+                      "careful consideration and must be set to a value under "
+                      "8 EB (9223372036854775808).")),
+    cfg.StrOpt('user_storage_quota', default='0',
+               help=_("Set a system wide quota for every user. This value is "
+                      "the total capacity that a user can use across "
+                      "all storage systems. A value of 0 means unlimited."
+                      "Optional unit can be specified for the value. Accepted "
+                      "units are B, KB, MB, GB and TB representing "
+                      "Bytes, KiloBytes, MegaBytes, GigaBytes and TeraBytes "
+                      "respectively. If no unit is specified then Bytes is "
+                      "assumed. Note that there should not be any space "
+                      "between value and unit and units are case sensitive.")),
+    cfg.BoolOpt('enable_v1_api', default=True,
+                help=_("Deploy the v1 OpenStack Images API.")),
+    cfg.BoolOpt('enable_v2_api', default=True,
+                help=_("Deploy the v2 OpenStack Images API.")),
+    cfg.BoolOpt('enable_v1_registry', default=True,
+                help=_("Deploy the v1 OpenStack Registry API.")),
+    cfg.BoolOpt('enable_v2_registry', default=True,
+                help=_("Deploy the v2 OpenStack Registry API.")),
+    cfg.StrOpt('pydev_worker_debug_host',
+               help=_('The hostname/IP of the pydev process listening for '
+                      'debug connections')),
+    cfg.PortOpt('pydev_worker_debug_port', default=5678,
+                help=_('The port on which a pydev process is listening for '
+                       'connections.')),
+    cfg.StrOpt('metadata_encryption_key', secret=True,
+               help=_('AES key for encrypting store \'location\' metadata. '
+                      'This includes, if used, Swift or S3 credentials. '
+                      'Should be set to a random string of length 16, 24 or '
+                      '32 bytes')),
+    cfg.StrOpt('digest_algorithm', default='sha256',
+               help=_('Digest algorithm which will be used for digital '
+                      'signature. Use the command "openssl list-message-'
+                      'digest-algorithms" to get the available algorithms '
+                      'supported by the version of OpenSSL on the platform.'
+                      ' Examples are "sha1", "sha256", "sha512", etc.')),
+]
+
+
 
 CONF = cfg.CONF
 CONF.register_opts(paste_deploy_opts, group='paste_deploy')
+CONF.register_opts(task_opts, group='task')
+CONF.register_opts(common_opts)
 policy.Enforcer(CONF)
+
+def parse_args(args=None, usage=None, default_config_files=None):
+    CONF(args=args,
+         project='clictest',
+         version=version.cached_version_string(),
+         usage=usage,
+         default_config_files=default_config_files)
 
 
 def _get_deployment_flavor(flavor=None):

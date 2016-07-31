@@ -55,6 +55,8 @@ CONF = cfg.CONF
 CONF.import_group("profiler", "clictest.common.wsgi")
 logging.register_options(CONF)
 
+KNOWN_EXCEPTIONS = (RuntimeError,
+                     exception.WorkerCreationFailure)
 
 def fail(e):
     global KNOWN_EXCEPTIONS
@@ -83,7 +85,7 @@ def main():
             osprofiler.web.disable()
 
         server = wsgi.Server()
-        server.start(config.load_paste_app('clictest-api'), default_port=9292)
+        server.start(config.load_paste_app('clictest-api'), default_port=8292)
         server.wait()
     except KNOWN_EXCEPTIONS as e:
         fail(e)

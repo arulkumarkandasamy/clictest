@@ -54,14 +54,7 @@ class Controller(object):
                 ],
             }
 
-        version_objs = []
-        if CONF.enable_v2_api:
-            version_objs.extend([
-                build_version_object(2.3, 'v2', 'CURRENT'),
-                build_version_object(2.2, 'v2', 'SUPPORTED'),
-                build_version_object(2.1, 'v2', 'SUPPORTED'),
-                build_version_object(2.0, 'v2', 'SUPPORTED'),
-            ])
+        version_objs = []        
         if CONF.enable_v1_api:
             version_objs.extend([
                 build_version_object(1.1, 'v1', 'SUPPORTED'),

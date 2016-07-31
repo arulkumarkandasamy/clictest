@@ -103,5 +103,374 @@ class Repo(object):
         base_item = self.helper.unproxy(item)
         result = self.base.remove(base_item)
         return self.helper.proxy(result)
+		
+class Task(object):
+    def __init__(self, base):
+        self.base = base
+
+    task_id = _proxy('base', 'task_id')
+    type = _proxy('base', 'type')
+    status = _proxy('base', 'status')
+    owner = _proxy('base', 'owner')
+    expires_at = _proxy('base', 'expires_at')
+    created_at = _proxy('base', 'created_at')
+    updated_at = _proxy('base', 'updated_at')
+    task_input = _proxy('base', 'task_input')
+    result = _proxy('base', 'result')
+    message = _proxy('base', 'message')
+
+    def begin_processing(self):
+        self.base.begin_processing()
+
+    def succeed(self, result):
+        self.base.succeed(result)
+
+    def fail(self, message):
+        self.base.fail(message)
+
+    def run(self, executor):
+        self.base.run(executor)
+
+
+class TaskStub(object):
+    def __init__(self, base):
+        self.base = base
+
+    task_id = _proxy('base', 'task_id')
+    type = _proxy('base', 'type')
+    status = _proxy('base', 'status')
+    owner = _proxy('base', 'owner')
+    expires_at = _proxy('base', 'expires_at')
+    created_at = _proxy('base', 'created_at')
+    updated_at = _proxy('base', 'updated_at')
+
+
+class TaskFactory(object):
+    def __init__(self,
+                 base,
+                 task_proxy_class=None,
+                 task_proxy_kwargs=None):
+        self.task_helper = Helper(task_proxy_class, task_proxy_kwargs)
+        self.base = base
+
+    def new_task(self, **kwargs):
+        t = self.base.new_task(**kwargs)
+        return self.task_helper.proxy(t)
+		
+# Metadef Namespace classes
+class MetadefNamespaceRepo(object):
+    def __init__(self, base,
+                 namespace_proxy_class=None, namespace_proxy_kwargs=None):
+        self.base = base
+        self.namespace_proxy_helper = Helper(namespace_proxy_class,
+                                             namespace_proxy_kwargs)
+
+    def get(self, namespace):
+        namespace_obj = self.base.get(namespace)
+        return self.namespace_proxy_helper.proxy(namespace_obj)
+
+    def add(self, namespace):
+        self.base.add(self.namespace_proxy_helper.unproxy(namespace))
+
+    def list(self, *args, **kwargs):
+        namespaces = self.base.list(*args, **kwargs)
+        return [self.namespace_proxy_helper.proxy(namespace) for namespace
+                in namespaces]
+
+    def remove(self, item):
+        base_item = self.namespace_proxy_helper.unproxy(item)
+        result = self.base.remove(base_item)
+        return self.namespace_proxy_helper.proxy(result)
+
+    def remove_objects(self, item):
+        base_item = self.namespace_proxy_helper.unproxy(item)
+        result = self.base.remove_objects(base_item)
+        return self.namespace_proxy_helper.proxy(result)
+
+    def remove_properties(self, item):
+        base_item = self.namespace_proxy_helper.unproxy(item)
+        result = self.base.remove_properties(base_item)
+        return self.namespace_proxy_helper.proxy(result)
+
+    def remove_tags(self, item):
+        base_item = self.namespace_proxy_helper.unproxy(item)
+        result = self.base.remove_tags(base_item)
+        return self.namespace_proxy_helper.proxy(result)
+
+    def save(self, item):
+        base_item = self.namespace_proxy_helper.unproxy(item)
+        result = self.base.save(base_item)
+        return self.namespace_proxy_helper.proxy(result)
+
+
+class MetadefNamespace(object):
+    def __init__(self, base):
+        self.base = base
+
+    namespace_id = _proxy('base', 'namespace_id')
+    namespace = _proxy('base', 'namespace')
+    display_name = _proxy('base', 'display_name')
+    description = _proxy('base', 'description')
+    owner = _proxy('base', 'owner')
+    visibility = _proxy('base', 'visibility')
+    protected = _proxy('base', 'protected')
+    created_at = _proxy('base', 'created_at')
+    updated_at = _proxy('base', 'updated_at')
+
+    def delete(self):
+        self.base.delete()
+
+
+class MetadefNamespaceFactory(object):
+    def __init__(self,
+                 base,
+                 meta_namespace_proxy_class=None,
+                 meta_namespace_proxy_kwargs=None):
+        self.meta_namespace_helper = Helper(meta_namespace_proxy_class,
+                                            meta_namespace_proxy_kwargs)
+        self.base = base
+
+    def new_namespace(self, **kwargs):
+        t = self.base.new_namespace(**kwargs)
+        return self.meta_namespace_helper.proxy(t)
+
+
+# Metadef object classes
+class MetadefObjectRepo(object):
+    def __init__(self, base,
+                 object_proxy_class=None, object_proxy_kwargs=None):
+        self.base = base
+        self.object_proxy_helper = Helper(object_proxy_class,
+                                          object_proxy_kwargs)
+
+    def get(self, namespace, object_name):
+        meta_object = self.base.get(namespace, object_name)
+        return self.object_proxy_helper.proxy(meta_object)
+
+    def add(self, meta_object):
+        self.base.add(self.object_proxy_helper.unproxy(meta_object))
+
+    def list(self, *args, **kwargs):
+        objects = self.base.list(*args, **kwargs)
+        return [self.object_proxy_helper.proxy(meta_object) for meta_object
+                in objects]
+
+    def remove(self, item):
+        base_item = self.object_proxy_helper.unproxy(item)
+        result = self.base.remove(base_item)
+        return self.object_proxy_helper.proxy(result)
+
+    def save(self, item):
+        base_item = self.object_proxy_helper.unproxy(item)
+        result = self.base.save(base_item)
+        return self.object_proxy_helper.proxy(result)
+
+
+class MetadefObject(object):
+    def __init__(self, base):
+        self.base = base
+    namespace = _proxy('base', 'namespace')
+    object_id = _proxy('base', 'object_id')
+    name = _proxy('base', 'name')
+    required = _proxy('base', 'required')
+    description = _proxy('base', 'description')
+    properties = _proxy('base', 'properties')
+    created_at = _proxy('base', 'created_at')
+    updated_at = _proxy('base', 'updated_at')
+
+    def delete(self):
+        self.base.delete()
+
+
+class MetadefObjectFactory(object):
+    def __init__(self,
+                 base,
+                 meta_object_proxy_class=None,
+                 meta_object_proxy_kwargs=None):
+        self.meta_object_helper = Helper(meta_object_proxy_class,
+                                         meta_object_proxy_kwargs)
+        self.base = base
+
+    def new_object(self, **kwargs):
+        t = self.base.new_object(**kwargs)
+        return self.meta_object_helper.proxy(t)
+
+
+# Metadef ResourceType classes
+class MetadefResourceTypeRepo(object):
+    def __init__(self, base, resource_type_proxy_class=None,
+                 resource_type_proxy_kwargs=None):
+        self.base = base
+        self.resource_type_proxy_helper = Helper(resource_type_proxy_class,
+                                                 resource_type_proxy_kwargs)
+
+    def add(self, meta_resource_type):
+        self.base.add(self.resource_type_proxy_helper.unproxy(
+            meta_resource_type))
+
+    def get(self, *args, **kwargs):
+        resource_type = self.base.get(*args, **kwargs)
+        return self.resource_type_proxy_helper.proxy(resource_type)
+
+    def list(self, *args, **kwargs):
+        resource_types = self.base.list(*args, **kwargs)
+        return [self.resource_type_proxy_helper.proxy(resource_type)
+                for resource_type in resource_types]
+
+    def remove(self, item):
+        base_item = self.resource_type_proxy_helper.unproxy(item)
+        result = self.base.remove(base_item)
+        return self.resource_type_proxy_helper.proxy(result)
+
+
+class MetadefResourceType(object):
+    def __init__(self, base):
+        self.base = base
+    namespace = _proxy('base', 'namespace')
+    name = _proxy('base', 'name')
+    prefix = _proxy('base', 'prefix')
+    properties_target = _proxy('base', 'properties_target')
+    created_at = _proxy('base', 'created_at')
+    updated_at = _proxy('base', 'updated_at')
+
+    def delete(self):
+        self.base.delete()
+
+
+class MetadefResourceTypeFactory(object):
+    def __init__(self,
+                 base,
+                 resource_type_proxy_class=None,
+                 resource_type_proxy_kwargs=None):
+        self.resource_type_helper = Helper(resource_type_proxy_class,
+                                           resource_type_proxy_kwargs)
+        self.base = base
+
+    def new_resource_type(self, **kwargs):
+        t = self.base.new_resource_type(**kwargs)
+        return self.resource_type_helper.proxy(t)
+
+
+# Metadef namespace property classes
+class MetadefPropertyRepo(object):
+    def __init__(self, base,
+                 property_proxy_class=None, property_proxy_kwargs=None):
+        self.base = base
+        self.property_proxy_helper = Helper(property_proxy_class,
+                                            property_proxy_kwargs)
+
+    def get(self, namespace, property_name):
+        property = self.base.get(namespace, property_name)
+        return self.property_proxy_helper.proxy(property)
+
+    def add(self, property):
+        self.base.add(self.property_proxy_helper.unproxy(property))
+
+    def list(self, *args, **kwargs):
+        properties = self.base.list(*args, **kwargs)
+        return [self.property_proxy_helper.proxy(property) for property
+                in properties]
+
+    def remove(self, item):
+        base_item = self.property_proxy_helper.unproxy(item)
+        result = self.base.remove(base_item)
+        return self.property_proxy_helper.proxy(result)
+
+    def save(self, item):
+        base_item = self.property_proxy_helper.unproxy(item)
+        result = self.base.save(base_item)
+        return self.property_proxy_helper.proxy(result)
+
+
+class MetadefProperty(object):
+    def __init__(self, base):
+        self.base = base
+    namespace = _proxy('base', 'namespace')
+    property_id = _proxy('base', 'property_id')
+    name = _proxy('base', 'name')
+    schema = _proxy('base', 'schema')
+
+    def delete(self):
+        self.base.delete()
+
+
+class MetadefPropertyFactory(object):
+    def __init__(self,
+                 base,
+                 property_proxy_class=None,
+                 property_proxy_kwargs=None):
+        self.meta_object_helper = Helper(property_proxy_class,
+                                         property_proxy_kwargs)
+        self.base = base
+
+    def new_namespace_property(self, **kwargs):
+        t = self.base.new_namespace_property(**kwargs)
+        return self.meta_object_helper.proxy(t)
+
+
+# Metadef tag classes
+class MetadefTagRepo(object):
+    def __init__(self, base,
+                 tag_proxy_class=None, tag_proxy_kwargs=None):
+        self.base = base
+        self.tag_proxy_helper = Helper(tag_proxy_class,
+                                       tag_proxy_kwargs)
+
+    def get(self, namespace, name):
+        meta_tag = self.base.get(namespace, name)
+        return self.tag_proxy_helper.proxy(meta_tag)
+
+    def add(self, meta_tag):
+        self.base.add(self.tag_proxy_helper.unproxy(meta_tag))
+
+    def add_tags(self, meta_tags):
+        tags_list = []
+        for meta_tag in meta_tags:
+            tags_list.append(self.tag_proxy_helper.unproxy(meta_tag))
+        self.base.add_tags(tags_list)
+
+    def list(self, *args, **kwargs):
+        tags = self.base.list(*args, **kwargs)
+        return [self.tag_proxy_helper.proxy(meta_tag) for meta_tag
+                in tags]
+
+    def remove(self, item):
+        base_item = self.tag_proxy_helper.unproxy(item)
+        result = self.base.remove(base_item)
+        return self.tag_proxy_helper.proxy(result)
+
+    def save(self, item):
+        base_item = self.tag_proxy_helper.unproxy(item)
+        result = self.base.save(base_item)
+        return self.tag_proxy_helper.proxy(result)
+
+
+class MetadefTag(object):
+    def __init__(self, base):
+        self.base = base
+
+    namespace = _proxy('base', 'namespace')
+    tag_id = _proxy('base', 'tag_id')
+    name = _proxy('base', 'name')
+    created_at = _proxy('base', 'created_at')
+    updated_at = _proxy('base', 'updated_at')
+
+    def delete(self):
+        self.base.delete()
+
+
+class MetadefTagFactory(object):
+    def __init__(self,
+                 base,
+                 meta_tag_proxy_class=None,
+                 meta_tag_proxy_kwargs=None):
+        self.meta_tag_helper = Helper(meta_tag_proxy_class,
+                                      meta_tag_proxy_kwargs)
+        self.base = base
+
+    def new_tag(self, **kwargs):
+        t = self.base.new_tag(**kwargs)
+        return self.meta_tag_helper.proxy(t)
+
 
 

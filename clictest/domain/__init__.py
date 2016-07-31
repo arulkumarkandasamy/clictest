@@ -30,7 +30,6 @@ from clictest.i18n import _, _LE, _LI, _LW
 
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
-CONF.import_opt('task_executor', 'clictest.common.config', group='task')
 
 
 _delayed_delete_imported = False
